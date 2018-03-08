@@ -14,6 +14,7 @@
 		33DEAFED204EF445006C8FAC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 33DEAFEB204EF445006C8FAC /* LaunchScreen.storyboard */; };
 		33DEAFF8204EF445006C8FAC /* TododoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DEAFF7204EF445006C8FAC /* TododoTests.swift */; };
 		33DEB003204EF445006C8FAC /* TododoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DEB002204EF445006C8FAC /* TododoUITests.swift */; };
+		33DEB01620515EE2006C8FAC /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DEB01520515EE2006C8FAC /* Item.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		33DEAFFE204EF445006C8FAC /* TododoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TododoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DEB002204EF445006C8FAC /* TododoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TododoUITests.swift; sourceTree = "<group>"; };
 		33DEB004204EF445006C8FAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		33DEB01520515EE2006C8FAC /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,8 +100,9 @@
 			isa = PBXGroup;
 			children = (
 				33DEAFE2204EF445006C8FAC /* AppDelegate.swift */,
-				33DEAFE4204EF445006C8FAC /* ToDoViewController.swift */,
-				33DEAFE6204EF445006C8FAC /* Main.storyboard */,
+				33DEB01920515F29006C8FAC /* Controller */,
+				33DEB01720515F06006C8FAC /* Model */,
+				33DEB01820515F15006C8FAC /* View */,
 				33DEAFE9204EF445006C8FAC /* Assets.xcassets */,
 				33DEAFEB204EF445006C8FAC /* LaunchScreen.storyboard */,
 				33DEAFEE204EF445006C8FAC /* Info.plist */,
@@ -123,6 +126,33 @@
 				33DEB004204EF445006C8FAC /* Info.plist */,
 			);
 			path = TododoUITests;
+			sourceTree = "<group>";
+		};
+		33DEB01720515F06006C8FAC /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				33DEB01520515EE2006C8FAC /* Item.swift */,
+			);
+			name = Model;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		33DEB01820515F15006C8FAC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				33DEAFE6204EF445006C8FAC /* Main.storyboard */,
+			);
+			name = View;
+			path = "New Group1";
+			sourceTree = "<group>";
+		};
+		33DEB01920515F29006C8FAC /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				33DEAFE4204EF445006C8FAC /* ToDoViewController.swift */,
+			);
+			name = Controller;
+			path = "New Group2";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33DEAFE5204EF445006C8FAC /* ToDoViewController.swift in Sources */,
+				33DEB01620515EE2006C8FAC /* Item.swift in Sources */,
 				33DEAFE3204EF445006C8FAC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
