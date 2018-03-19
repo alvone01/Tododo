@@ -7,12 +7,22 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoViewController: UITableViewController {
     
+    var selectedCategory : Category? {
+        didSet {
+            loadItems()
+        }
+    }
+    
 //    let defaults = UserDefaults.standard
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("items.plist")
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     
     
     var itemArray = [Item]()
@@ -21,6 +31,7 @@ class ToDoViewController: UITableViewController {
         super.viewDidLoad()
         
         print(dataFilePath)
+        
         
 //        let newItem = Item()
 //        newItem.title = "Biggo"
@@ -32,7 +43,6 @@ class ToDoViewController: UITableViewController {
 //            itemArray = items
 //        }
         
-        loadItems()
         
     }
     
@@ -53,14 +63,20 @@ class ToDoViewController: UITableViewController {
 //            cell.accessoryType = .none
 //        }
         
+        return cell
+        
         tableView.reloadData()
         
-        return cell
+//        order of code matters ^
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
+//        ^^ to delete list (order matters)
         
 //        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
 //            tableView.cellForRow(at: indexPath)?.accessoryType = .none
@@ -68,7 +84,6 @@ class ToDoViewController: UITableViewController {
 //            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
 //        }
         
-        tableView.reloadData()
         
         saveItems()
         
@@ -83,8 +98,11 @@ class ToDoViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
-            let newItem = Item()
+            
+            let newItem = Item(context: self.context)
             newItem.title = textField.text!
+            newItem.parent = self.selectedCategory
+            newItem.done = false
             
             self.itemArray.append(newItem)
             
@@ -92,7 +110,7 @@ class ToDoViewController: UITableViewController {
             
 //            self.defaults.setValue(self.itemArray, forKey: "ToDoItems")
             
-            self.tableView.reloadData()
+            
         }
         
         
@@ -112,28 +130,102 @@ class ToDoViewController: UITableViewController {
     
     func saveItems() {
         
-        let encoder = PropertyListEncoder()
-        
         do {
-        let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
+        try context.save()
             
         } catch {
-            print(error)
+            print("ERROR \(error)")
+        }
+        
+        tableView.reloadData()
+    }
+    
+//    func saveItemsE() {
+//
+//        let encoder = PropertyListEncoder()
+//
+//        do {
+//            let data = try encoder.encode(itemArray)
+//            try data.write(to: dataFilePath!)
+//
+//        } catch {
+//            print(error)
+//        }
+//    }
+    
+    func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest(), predicate : NSPredicate? = nil) {
+        
+        //to set default value to void parameter ^
+    
+//            let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        let categoryPredicate = NSPredicate(format: "parent.name MATCHES %@", selectedCategory!.name!)
+        
+//        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, categoryPredicate])
+//
+//        request.predicate = compoundPredicate
+        
+        
+//        to check wether user calls another predicate when calling loadItems
+        
+        if let additionalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
+            do {
+                itemArray = try context.fetch(request)
+            } catch {
+                print(error)
+            }
+        
+        tableView.reloadData()
+    
+        }
+    
+//    func loadItemsE() {
+//
+//            if let data = try? Data(contentsOf: dataFilePath!) {
+//                let decoder = PropertyListDecoder()
+//                do {
+//                itemArray = try decoder.decode([Item].self, from: data)
+//                } catch {
+//                    print(error)
+//                }
+//            }
+//
+//    }
+}
+
+extension ToDoViewController : UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        let predicate = NSPredicate(format: "title contains[cd] %@", searchBar.text!)
+        
+        request.predicate = predicate
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        loadItems(with : request, predicate: predicate)
+        
+        
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text?.count == 0 {
+            loadItems()
+        
+        //to set the code inside into main thread, so that code can be executed even if other threads (ex. background threads are still running
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
         }
     }
     
-    func loadItems() {
-        
-            if let data = try? Data(contentsOf: dataFilePath!) {
-                let decoder = PropertyListDecoder()
-                do {
-                itemArray = try decoder.decode([Item].self, from: data)
-                } catch {
-                    print(error)
-                }
-            }
-        
-    }
 }
 
